@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 12-insert-sales-points
+      author: Vlad
+      changes:
+        - insert:
+            schemaName: processingcenterschema
+            tableName: sales_point
+            columns:
+              - column: { name: pos_name, value: 'Shop №1' }
+              - column: { name: pos_address, value: 'City 1-st 1' }
+              - column: { name: pos_inn, value: '123456788888' }
+              - column: { name: acquiring_bank_id, valueNumeric: 1 }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: sales_point
+            columns:
+              - column: { name: pos_name, value: 'Shop №2 ' }
+              - column: { name: pos_address, value: 'City, 2-st 2 ' }
+              - column: { name: pos_inn, value: '159148777777' }
+              - column: { name: acquiring_bank_id, valueNumeric: 3 }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: sales_point
+            columns:
+              - column: { name: pos_name, value: 'Shop №3' }
+              - column: { name: pos_address, value: 'City, 3-st 3 ' }
+              - column: { name: pos_inn, value: '123596222222' }
+              - column: { name: acquiring_bank_id, valueNumeric: 1 }

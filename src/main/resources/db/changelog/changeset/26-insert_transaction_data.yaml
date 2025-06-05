@@ -1,0 +1,116 @@
+databaseChangeLog:
+  - changeSet:
+      id: 26-insert-default-transactions
+      author: Vlad
+      changes:
+        - insert:
+            schemaName: processingcenterschema
+            tableName: transaction
+            columns:
+              - column: { name: transaction_date, value: '2022-10-22' }
+              - column: { name: sum, value: 1000.11 }
+              - column: { name: transaction_name, value: 'Cash deposit' }
+              - column: { name: account_id, valueNumeric: 1 }
+              - column: { name: transaction_type_id, valueNumeric: 2 }
+              - column: { name: card_id, valueNumeric: 1 }
+              - column: { name: terminal_id, valueNumeric: 1 }
+              - column: { name: response_code_id, valueNumeric: 1 }
+              - column: { name: authorization_code, value: '123456' }
+              - column: { name: received_from_issuing_bank, value: '2022-10-22T00:00:00' }
+              - column: { name: sent_to_issuing_bank, value: '2022-10-22T09:05:23.129' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: transaction
+            columns:
+              - column: { name: transaction_date, value: '2022-04-06' }
+              - column: { name: sum, value: 50000.92 }
+              - column: { name: transaction_name, value: 'Cash deposit' }
+              - column: { name: account_id, valueNumeric: 2 }
+              - column: { name: transaction_type_id, valueNumeric: 2 }
+              - column: { name: card_id, valueNumeric: 2 }
+              - column: { name: terminal_id, valueNumeric: 2 }
+              - column: { name: response_code_id, valueNumeric: 2 }
+              - column: { name: authorization_code, value: '112233' }
+              - column: { name: received_from_issuing_bank, value: '2022-04-06T00:00:00' }
+              - column: { name: sent_to_issuing_bank, value: '2022-04-06T12:03:41.861' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: transaction
+            columns:
+              - column: { name: transaction_date, value: '2022-10-21' }
+              - column: { name: sum, value: 750000.12 }
+              - column: { name: transaction_name, value: 'Cash deposit' }
+              - column: { name: account_id, valueNumeric: 3 }
+              - column: { name: transaction_type_id, valueNumeric: 2 }
+              - column: { name: card_id, valueNumeric: 1 }
+              - column: { name: terminal_id, valueNumeric: 1 }
+              - column: { name: response_code_id, valueNumeric: 3 }
+              - column: { name: authorization_code, value: '546213' }
+              - column: { name: received_from_issuing_bank, value: '2022-10-21T00:00:00' }
+              - column: { name: sent_to_issuing_bank, value: '2022-10-21T12:03:41.861' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: transaction
+            columns:
+              - column: { name: transaction_date, value: '2022-10-23' }
+              - column: { name: sum, value: 350.41 }
+              - column: { name: transaction_name, value: 'Money transfer' }
+              - column: { name: account_id, valueNumeric: 1 }
+              - column: { name: transaction_type_id, valueNumeric: 1 }
+              - column: { name: card_id, valueNumeric: 2 }
+              - column: { name: terminal_id, valueNumeric: 1 }
+              - column: { name: response_code_id, valueNumeric: 3 }
+              - column: { name: authorization_code, value: '546211' }
+              - column: { name: received_from_issuing_bank, value: '2022-10-23T00:00:00' }
+              - column: { name: sent_to_issuing_bank, value: '2022-10-23T12:03:41.861' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: transaction
+            columns:
+              - column: { name: transaction_date, value: '2022-06-23' }
+              - column: { name: sum, value: 1298.85 }
+              - column: { name: transaction_name, value: 'Commission' }
+              - column: { name: account_id, valueNumeric: 2 }
+              - column: { name: transaction_type_id, valueNumeric: 1 }
+              - column: { name: card_id, valueNumeric: 1 }
+              - column: { name: terminal_id, valueNumeric: 2 }
+              - column: { name: response_code_id, valueNumeric: 1 }
+              - column: { name: authorization_code, value: '546222' }
+              - column: { name: received_from_issuing_bank, value: '2022-06-23T00:00:00' }
+              - column: { name: sent_to_issuing_bank, value: '2022-06-23T12:03:41.861' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: transaction
+            columns:
+              - column: { name: transaction_date, value: '2022-10-22' }
+              - column: { name: sum, value: 35000.11 }
+              - column: { name: transaction_name, value: 'Payment of the invoice' }
+              - column: { name: account_id, valueNumeric: 3 }
+              - column: { name: transaction_type_id, valueNumeric: 1 }
+              - column: { name: card_id, valueNumeric: 2 }
+              - column: { name: terminal_id, valueNumeric: 2 }
+              - column: { name: response_code_id, valueNumeric: 3 }
+              - column: { name: authorization_code, value: '546233' }
+              - column: { name: received_from_issuing_bank, value: '2022-10-22T00:00:00' }
+              - column: { name: sent_to_issuing_bank, value: '2022-10-22T00:00:00' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: transaction
+            columns:
+              - column: { name: transaction_date, value: '2022-10-22' }
+              - column: { name: sum, value: 10000.0 }
+              - column: { name: transaction_name, value: 'Cash deposit' }
+              - column: { name: account_id, valueNumeric: 4 }
+              - column: { name: transaction_type_id, valueNumeric: 2 }
+              - column: { name: card_id, valueNumeric: 1 }
+              - column: { name: terminal_id, valueNumeric: 2 }
+              - column: { name: response_code_id, valueNumeric: 2 }
+              - column: { name: authorization_code, value: '546244' }
+              - column: { name: received_from_issuing_bank, value: '2022-10-22T00:00:00' }
+              - column: { name: sent_to_issuing_bank, value: '2022-10-22T12:03:41.861' }

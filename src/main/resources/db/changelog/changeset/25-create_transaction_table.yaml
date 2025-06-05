@@ -1,0 +1,110 @@
+databaseChangeLog:
+  - changeSet:
+      id: 25-create-transaction-table
+      author: Vlad
+      changes:
+        - createTable:
+            schemaName: processingcenterschema
+            tableName: transaction
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: transaction_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sum
+                  type: decimal
+              - column:
+                  name: transaction_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: account_id
+                  type: bigint
+              - column:
+                  name: transaction_type_id
+                  type: bigint
+              - column:
+                  name: card_id
+                  type: bigint
+              - column:
+                  name: terminal_id
+                  type: bigint
+              - column:
+                  name: response_code_id
+                  type: bigint
+              - column:
+                  name: authorization_code
+                  type: varchar(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: received_from_issuing_bank
+                  type: timestamp
+              - column:
+                  name: sent_to_issuing_bank
+                  type: timestamp
+
+        - addForeignKeyConstraint:
+            baseTableSchemaName: processingcenterschema
+            baseTableName: transaction
+            baseColumnNames: account_id
+            referencedTableSchemaName: processingcenterschema
+            referencedTableName: account
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            constraintName: fk_transaction_account
+
+        - addForeignKeyConstraint:
+            baseTableSchemaName: processingcenterschema
+            baseTableName: transaction
+            baseColumnNames: transaction_type_id
+            referencedTableSchemaName: processingcenterschema
+            referencedTableName: transaction_type
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            constraintName: fk_transaction_transaction_type
+
+        - addForeignKeyConstraint:
+            baseTableSchemaName: processingcenterschema
+            baseTableName: transaction
+            baseColumnNames: card_id
+            referencedTableSchemaName: processingcenterschema
+            referencedTableName: card
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            constraintName: fk_transaction_card
+
+        - addForeignKeyConstraint:
+            baseTableSchemaName: processingcenterschema
+            baseTableName: transaction
+            baseColumnNames: terminal_id
+            referencedTableSchemaName: processingcenterschema
+            referencedTableName: terminal
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            constraintName: fk_transaction_terminal
+
+        - addForeignKeyConstraint:
+            baseTableSchemaName: processingcenterschema
+            baseTableName: transaction
+            baseColumnNames: response_code_id
+            referencedTableSchemaName: processingcenterschema
+            referencedTableName: response_code
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            constraintName: fk_transaction_response_code

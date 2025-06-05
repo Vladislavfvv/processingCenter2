@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: 15-create-terminal-table
+      author: Vlad
+      changes:
+        - createTable:
+            schemaName: processingcenterschema
+            tableName: terminal
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: terminal_id
+                  type: varchar(9)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: mcc_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pos_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: terminal
+            baseColumnNames: mcc_id
+            referencedTableName: merchant_category_code
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            constraintName: fk_terminal_mcc
+            baseTableSchemaName: processingcenterschema
+            referencedTableSchemaName: processingcenterschema
+        - addForeignKeyConstraint:
+            baseTableName: terminal
+            baseColumnNames: pos_id
+            referencedTableName: sales_point
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            constraintName: fk_terminal_sales_point
+            baseTableSchemaName: processingcenterschema
+            referencedTableSchemaName: processingcenterschema

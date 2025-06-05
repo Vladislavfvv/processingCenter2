@@ -1,0 +1,67 @@
+databaseChangeLog:
+  - changeSet:
+      id: 6-insert-currencies
+      author: Vlad
+      changes:
+        - insert:
+            schemaName: processingcenterschema
+            tableName: currency
+            columns:
+              - column: { name: currency_digital_code, value: '643' }
+              - column: { name: currency_letter_code, value: 'RUB' }
+              - column: { name: currency_digital_code_account, value: '810' }
+              - column: { name: currency_name, value: 'Russian Ruble' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: currency
+            columns:
+              - column: { name: currency_digital_code, value: '980' }
+              - column: { name: currency_letter_code, value: 'UAN' }
+              - column: { name: currency_digital_code_account, value: '980' }
+              - column: { name: currency_name, value: 'Hryvnia' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: currency
+            columns:
+              - column: { name: currency_digital_code, value: '840' }
+              - column: { name: currency_letter_code, value: 'USD' }
+              - column: { name: currency_digital_code_account, value: '840' }
+              - column: { name: currency_name, value: 'US Dollar' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: currency
+            columns:
+              - column: { name: currency_digital_code, value: '978' }
+              - column: { name: currency_letter_code, value: 'EUR' }
+              - column: { name: currency_digital_code_account, value: '978' }
+              - column: { name: currency_name, value: 'Euro' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: currency
+            columns:
+              - column: { name: currency_digital_code, value: '392' }
+              - column: { name: currency_letter_code, value: 'JPY' }
+              - column: { name: currency_digital_code_account, value: '392' }
+              - column: { name: currency_name, value: 'Yen' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: currency
+            columns:
+              - column: { name: currency_digital_code, value: '156' }
+              - column: { name: currency_letter_code, value: 'CNY' }
+              - column: { name: currency_digital_code_account, value: '156' }
+              - column: { name: currency_name, value: 'Yuan Renminbi' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: currency
+            columns:
+              - column: { name: currency_digital_code, value: '826' }
+              - column: { name: currency_letter_code, value: 'GBP' }
+              - column: { name: currency_digital_code_account, value: '826' }
+              - column: { name: currency_name, value: 'Pound Sterling' }

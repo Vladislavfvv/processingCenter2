@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: 'postgres:latest'
+    restart: always
+    container_name: 'processingcenter'
+    environment:
+      POSTGRES_DB: processingcenter
+      POSTGRES_USER: lesson
+      POSTGRES_PASSWORD: lesson
+    ports:
+      - "5455:5432"
+    volumes:
+      # создание папки для подключения и хранения БД в проекте
+#      - ./processingcenter-data:/var/lib/postgresql/data
+#      - ./initdb:/docker-entrypoint-initdb.d
+# смонтировать скрипт в контейнер в папку /docker-entrypoint-initdb.d/. Это делается через volumes.
+      #
+      #
+        - ./sql/create-schemas.sql:/docker-entrypoint-initdb.d/01_create_schemas.sql
+        - ./processingcenter-data:/var/lib/postgresql/data
+
+  redis:
+    image: 'redis:latest'
+    restart: always
+    container_name: redis_cache_pc
+    ports:
+      - "7479:6379"
+
+ # processingcenter-api:
+  #  build:
+  #    context: .
+  #    dockerfile: Dockerfile
+  #  container_name: processingcenter-api
+  #  ports:
+  #    - "8050:8050"
+  #  depends_on:
+  #    - postgres
+  #    - redis
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    container_name: pgadmin_pc
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8071:80"
+    volumes:
+      - pgadmin_data_pc:/var/lib/pgadmin
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    restart: always
+    container_name: processingcenter-swagger-ui
+    ports:
+      - "8076:8080"
+    environment:
+      SWAGGER_JSON: http://host.docker.internal:8050/v3/api-docs
+      VALIDATOR_URL: "null"
+      # чтобы Swagger не жаловался при отсутствии online-валидатора
+#    depends_on:
+#      - processingcenter
+      #- processingcenter-api
+
+volumes:
+  pgadmin_data_pc:
+

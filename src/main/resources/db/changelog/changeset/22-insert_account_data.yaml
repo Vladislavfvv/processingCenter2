@@ -1,0 +1,37 @@
+databaseChangeLog:
+  - changeSet:
+      id: 22-insert-account-data
+      author: Vlad
+      changes:
+        - insert:
+            schemaName: processingcenterschema
+            tableName: account
+            columns:
+              - column: { name: account_number, value: '40817810800000000001' }
+              - column: { name: balance, value: 649.7 }
+              - column: { name: currency_id, valueNumeric: 1 }
+              - column: { name: issuing_bank_id, valueNumeric: 1 }
+        - insert:
+            schemaName: processingcenterschema
+            tableName: account
+            columns:
+              - column: { name: account_number, value: '40817810100000000002' }
+              - column: { name: balance, value: 48702.07 }
+              - column: { name: currency_id, valueNumeric: 1 }
+              - column: { name: issuing_bank_id, valueNumeric: 1 }
+        - insert:
+            schemaName: processingcenterschema
+            tableName: account
+            columns:
+              - column: { name: account_number, value: '40817810400000000003' }
+              - column: { name: balance, value: 715000.01 }
+              - column: { name: currency_id, valueNumeric: 1 }
+              - column: { name: issuing_bank_id, valueNumeric: 1 }
+        - insert:
+            schemaName: processingcenterschema
+            tableName: account
+            columns:
+              - column: { name: account_number, value: '40817810400000000004' }
+              - column: { name: balance, value: 10000.0 }
+              - column: { name: currency_id, valueNumeric: 3 }
+              - column: { name: issuing_bank_id, valueNumeric: 1 }

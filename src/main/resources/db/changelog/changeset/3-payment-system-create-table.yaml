@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3-create-payment-system-table
+      author: Vlad
+      changes:
+        - createTable:
+            tableName: payment_system
+            schemaName: processingcenterschema
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+
+              - column:
+                  name: payment_system_name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                    unique: true

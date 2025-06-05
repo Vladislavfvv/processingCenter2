@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20-insert-transaction_type-data
+      author: Vlad
+      changes:
+        - insert:
+            schemaName: processingcenterschema
+            tableName: transaction_type
+            columns:
+              - column: { name: transaction_type_name, value: 'Списание со счета' }
+              - column: { name: operator, value: '-' }
+        - insert:
+            schemaName: processingcenterschema
+            tableName: transaction_type
+            columns:
+              - column: { name: transaction_type_name, value: 'Пополнение счета' }
+              - column: { name: operator, value: '+' }

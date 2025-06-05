@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: 11-create-sales-point-table
+      author: Vlad
+      changes:
+        - createTable:
+            tableName: sales_point
+            schemaName: processingcenterschema
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: pos_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pos_address
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pos_inn
+                  type: varchar(12)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: acquiring_bank_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+            foreignKeys:
+              - foreignKeyConstraint:
+                  baseColumnNames: acquiring_bank_id
+                  baseTableName: sales_point
+                  referencedColumnNames: id
+                  referencedTableName: acquiring_bank
+                  onDelete: CASCADE
+                  onUpdate: CASCADE

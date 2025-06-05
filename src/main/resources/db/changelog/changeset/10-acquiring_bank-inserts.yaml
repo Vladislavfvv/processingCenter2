@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 10-insert-acquiring-banks
+      author: Vlad
+      changes:
+        - insert:
+            schemaName: processingcenterschema
+            tableName: acquiring_bank
+            columns:
+              - column: { name: bic, value: '041234567' }
+              - column: { name: abbreviated_name, value: 'ПАО Банк-эквайер №1' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: acquiring_bank
+            columns:
+              - column: { name: bic, value: '041234568' }
+              - column: { name: abbreviated_name, value: 'ПАО Банк-эквайер №2' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: acquiring_bank
+            columns:
+              - column: { name: bic, value: '041234569' }
+              - column: { name: abbreviated_name, value: 'ПАО Банк-эквайер №3' }

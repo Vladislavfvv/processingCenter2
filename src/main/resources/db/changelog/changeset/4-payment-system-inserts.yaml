@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4-insert-payment-system
+      author: Vlad
+      changes:
+        - insert:
+            schemaName: processingcenterschema
+            tableName: payment_system
+            columns:
+              - column: { name: payment_system_name, value: 'VISA International Service Association' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: payment_system
+            columns:
+              - column: { name: payment_system_name, value: 'Mastercard' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: payment_system
+            columns:
+              - column: { name: payment_system_name, value: 'JCB' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: payment_system
+            columns:
+              - column: { name: payment_system_name, value: 'American Express' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: payment_system
+            columns:
+              - column: { name: payment_system_name, value: 'Diners Club International' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: payment_system
+            columns:
+              - column: { name: payment_system_name, value: 'China UnionPay' }

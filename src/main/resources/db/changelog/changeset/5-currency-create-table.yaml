@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5-create-currency-table
+      author: Vlad
+      changes:
+        - createTable:
+            tableName: currency
+            schemaName: processingcenterschema
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: currency_digital_code
+                  type: varchar(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency_letter_code
+                  type: varchar(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency_digital_code_account
+                  type: varchar(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true

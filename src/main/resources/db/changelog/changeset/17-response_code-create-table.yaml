@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 17-create-response_code-table
+      author: Vlad
+      changes:
+        - createTable:
+            schemaName: processingcenterschema
+            tableName: response_code
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: error_code
+                  type: varchar(2)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: error_description
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: error_level
+                  type: varchar(255)
+                  constraints:
+                    nullable: false

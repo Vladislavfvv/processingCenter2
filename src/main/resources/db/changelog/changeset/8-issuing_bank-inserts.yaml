@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 8-insert-issuing-banks
+      author: Vlad
+      changes:
+        - insert:
+            schemaName: processingcenterschema
+            tableName: issuing_bank
+            columns:
+              - column: { name: bic, value: '041234569' }
+              - column: { name: bin, value: '12345' }
+              - column: { name: abbreviated_name, value: 'ОАО Приорбанк ' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: issuing_bank
+            columns:
+              - column: { name: bic, value: '041234570' }
+              - column: { name: bin, value: '45256' }
+              - column: { name: abbreviated_name, value: 'ОАО Сбербанк ' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: issuing_bank
+            columns:
+              - column: { name: bic, value: '041234571' }
+              - column: { name: bin, value: '98725' }
+              - column: { name: abbreviated_name, value: 'ЗАО МТБ Банк ' }

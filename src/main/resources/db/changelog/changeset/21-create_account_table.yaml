@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: 21-create-account-table
+      author: Vlad
+      changes:
+        - createTable:
+            schemaName: processingcenterschema
+            tableName: account
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: account_number
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: balance
+                  type: decimal
+              - column:
+                  name: currency_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: issuing_bank_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+        - addForeignKeyConstraint:
+            baseTableSchemaName: processingcenterschema
+            baseTableName: account
+            baseColumnNames: currency_id
+            referencedTableSchemaName: processingcenterschema
+            referencedTableName: currency
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            constraintName: fk_account_currency
+        - addForeignKeyConstraint:
+            baseTableSchemaName: processingcenterschema
+            baseTableName: account
+            baseColumnNames: issuing_bank_id
+            referencedTableSchemaName: processingcenterschema
+            referencedTableName: issuing_bank
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            constraintName: fk_account_issuing_bank

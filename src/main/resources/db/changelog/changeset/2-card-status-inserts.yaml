@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2-insert-card-status
+      author: Vlad
+      changes:
+        - insert:
+            schemaName: processingcenterschema
+            tableName: card_status
+            columns:
+              - column: { name: card_status_name, value: 'Card is not active' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: card_status
+            columns:
+              - column: { name: card_status_name, value: 'Card is valid' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: card_status
+            columns:
+              - column: { name: card_status_name, value: 'Card is temporarily blocked' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: card_status
+            columns:
+              - column: { name: card_status_name, value: 'Card is lost' }
+
+        - insert:
+            schemaName: processingcenterschema
+            tableName: card_status
+            columns:
+              - column: { name: card_status_name, value: 'Card is compromised' }

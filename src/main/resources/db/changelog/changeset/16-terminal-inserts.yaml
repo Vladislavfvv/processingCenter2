@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: 16-insert-terminal-data
+      author: Vlad
+      changes:
+        - insert:
+            schemaName: processingcenterschema
+            tableName: terminal
+            columns:
+              - column: { name: terminal_id, value: '00000001' }
+              - column: { name: mcc_id, valueNumeric: 1 }
+              - column: { name: pos_id, valueNumeric: 1 }
+        - insert:
+            schemaName: processingcenterschema
+            tableName: terminal
+            columns:
+              - column: { name: terminal_id, value: '00000002' }
+              - column: { name: mcc_id, valueNumeric: 2 }
+              - column: { name: pos_id, valueNumeric: 2 }
+        - insert:
+            schemaName: processingcenterschema
+            tableName: terminal
+            columns:
+              - column: { name: terminal_id, value: '00000003' }
+              - column: { name: mcc_id, valueNumeric: 3 }
+              - column: { name: pos_id, valueNumeric: 3 }

@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: 18-insert-response_code-data
+      author: Vlad
+      changes:
+        - insert:
+            schemaName: processingcenterschema
+            tableName: response_code
+            columns:
+              - column: { name: error_code, value: '00' }
+              - column: { name: error_description, value: 'одобрено и завершено' }
+              - column: { name: error_level, value: 'Все в порядке' }
+        - insert:
+            schemaName: processingcenterschema
+            tableName: response_code
+            columns:
+              - column: { name: error_code, value: '01' }
+              - column: { name: error_description, value: 'авторизация отклонена, обратиться в банк-эмитент' }
+              - column: { name: error_level, value: 'не критическая' }
+        - insert:
+            schemaName: processingcenterschema
+            tableName: response_code
+            columns:
+              - column: { name: error_code, value: '03' }
+              - column: { name: error_description, value: 'незарегистрированная торговая точка или агрегатор платежей' }
+              - column: { name: error_level, value: 'не критическая' }
+        - insert:
+            schemaName: processingcenterschema
+            tableName: response_code
+            columns:
+              - column: { name: error_code, value: '05' }
+              - column: { name: error_description, value: 'авторизация отклонена, оплату не проводить' }
+              - column: { name: error_level, value: 'критическая' }
+        - insert:
+            schemaName: processingcenterschema
+            tableName: response_code
+            columns:
+              - column: { name: error_code, value: '41' }
+              - column: { name: error_description, value: 'карта утеряна, изъять' }
+              - column: { name: error_level, value: 'критическая' }
+        - insert:
+            schemaName: processingcenterschema
+            tableName: response_code
+            columns:
+              - column: { name: error_code, value: '51' }
+              - column: { name: error_description, value: 'недостаточно средств на счёте' }
+              - column: { name: error_level, value: 'сервисная или аппаратная ошибка' }
+        - insert:
+            schemaName: processingcenterschema
+            tableName: response_code
+            columns:
+              - column: { name: error_code, value: '55' }
+              - column: { name: error_description, value: 'неправильный PIN' }
+              - column: { name: error_level, value: 'не критическая' }

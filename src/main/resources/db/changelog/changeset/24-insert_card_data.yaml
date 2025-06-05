@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 24-insert-card-data
+      author: Vlad
+      changes:
+        - insert:
+            schemaName: processingcenterschema
+            tableName: card
+            columns:
+              - column: { name: card_number, value: '4123450000000019' }
+              - column: { name: expiration_date, valueDate: '2025-12-31' }
+              - column: { name: holder_name, value: 'IVAN I. IVANOV' }
+              - column: { name: card_status_id, valueNumeric: 2 }
+              - column: { name: payment_system_id, valueNumeric: 1 }
+              - column: { name: account_id, valueNumeric: 1 }
+              - column: { name: received_from_issuing_bank, valueDate: '2022-10-21T15:26:06.175' }
+              - column: { name: sent_to_issuing_bank, valueDate: '2022-10-21T15:27:08.271' }
+        - insert:
+            schemaName: processingcenterschema
+            tableName: card
+            columns:
+              - column: { name: card_number, value: '5123450000000024' }
+              - column: { name: expiration_date, valueDate: '2025-12-31' }
+              - column: { name: holder_name, value: 'SEMION E. PETROV' }
+              - column: { name: card_status_id, valueNumeric: 3 }
+              - column: { name: payment_system_id, valueNumeric: 2 }
+              - column: { name: account_id, valueNumeric: 2 }
+              - column: { name: received_from_issuing_bank, valueDate: '2022-04-05T10:23:05.372' }
+              - column: { name: sent_to_issuing_bank, valueDate: '2022-04-05T10:24:02.175' }
