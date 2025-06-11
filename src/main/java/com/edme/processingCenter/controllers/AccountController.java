@@ -4,6 +4,7 @@ import com.edme.processingCenter.dto.AccountDto;
 import com.edme.processingCenter.mappers.AccountMapper;
 import com.edme.processingCenter.services.AccountService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +14,11 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/accounts")
 public class AccountController {
 
-    private AccountService accountService;
-
+    private final AccountService accountService;
     private AccountMapper accountMapper;
 
     @GetMapping

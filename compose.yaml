@@ -21,6 +21,25 @@ services:
         - ./sql/create-schemas.sql:/docker-entrypoint-initdb.d/01_create_schemas.sql
         - ./processingcenter-data:/var/lib/postgresql/data
 
+#  rabbitmq:
+#    image: rabbitmq:3-management
+#    container_name: rabbitmq_pc
+#    hostname: rabbitmq
+#    environment:
+#      RABBITMQ_DEFAULT_USER: guest
+#      RABBITMQ_DEFAULT_PASS: guest
+#    ports:
+#      - "5672:5672"    # AMQP протокол
+#      - "15672:15672"  # Веб-интерфейс
+#    volumes:
+#      - rabbitmq_data:/var/lib/rabbitmq
+#    healthcheck:
+#      test: ["CMD", "rabbitmqctl", "status"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 5
+
+
   redis:
     image: 'redis:latest'
     restart: always
@@ -58,7 +77,8 @@ services:
     ports:
       - "8076:8080"
     environment:
-      SWAGGER_JSON: http://host.docker.internal:8050/v3/api-docs
+      SWAGGER_JSON: http://host.docker.internal:8080/v3/api-docs
+      #SWAGGER_JSON: http://host.docker.internal:8050/v3/api-docs
       VALIDATOR_URL: "null"
       # чтобы Swagger не жаловался при отсутствии online-валидатора
 #    depends_on:

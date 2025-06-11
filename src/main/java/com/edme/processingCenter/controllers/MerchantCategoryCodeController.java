@@ -3,6 +3,7 @@ package com.edme.processingCenter.controllers;
 import com.edme.processingCenter.dto.MerchantCategoryCodeDto;
 import com.edme.processingCenter.services.MerchantCategoryCodeService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,11 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/merchantCategoryCodes")
 public class MerchantCategoryCodeController {
 
-     private MerchantCategoryCodeService merchantCategoryCodeService;
+    private final MerchantCategoryCodeService merchantCategoryCodeService;
 
     @GetMapping
     public ResponseEntity<List<MerchantCategoryCodeDto>> getMerchantCategoryCodeList() {

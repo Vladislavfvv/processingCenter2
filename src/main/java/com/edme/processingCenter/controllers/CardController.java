@@ -4,6 +4,7 @@ package com.edme.processingCenter.controllers;
 import com.edme.processingCenter.dto.CardDto;
 import com.edme.processingCenter.services.CardService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,11 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/cards")
 public class CardController {
 
-    private CardService cardService;
+    private final CardService cardService;
 
     @GetMapping
     public ResponseEntity<List<CardDto>> getListAllCards() {

@@ -1,21 +1,34 @@
 package com.edme.processingCenter.controllers;
 
+import com.edme.commondto.dto.TransactionExchangeDto;
+import com.edme.processingCenter.dto.MessageResponse;
 import com.edme.processingCenter.dto.TransactionDto;
+//import com.edme.processingCenter.dto.feignDto.TransactionExchangeDto;
 import com.edme.processingCenter.services.TransactionService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/transactions")
 public class TransactionController {
+//    @Autowired
+    private final TransactionService transactionService;
 
-    private TransactionService transactionService;
+//    @PostMapping
+//    public TransactionExchangeDto createTransaction(@RequestBody TransactionExchangeDto transaction) {
+//        // обработка и возврат
+//        return transaction;
+//    }
 
     @GetMapping
     public ResponseEntity<List<TransactionDto>> getAllTransactions() {
@@ -29,10 +42,39 @@ public class TransactionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<?> saveTransaction(@RequestBody @Valid TransactionDto transactionDto) {
-        return ResponseEntity.ok(transactionService.save(transactionDto));
-    }
+//    @PostMapping
+//    public ResponseEntity<?> saveTransaction(@RequestBody @Valid TransactionDto transactionDto) {
+//        return ResponseEntity.ok(transactionService.save(transactionDto));
+//    }
+
+//    @PostMapping
+//    public ResponseEntity<?> saveTransaction(@RequestBody @Valid TransactionDto transactionDto) {
+//        // Обнуляем ID перед сохранением
+//        transactionDto.setId(null);
+//        Optional<TransactionExchangeDto> result = transactionService.saveAndSendTransaction(transactionDto);
+//        log.info("Try to received Feign request");
+//        if (result.isPresent()) {
+//            return ResponseEntity.ok(result.get());
+//        } else {
+////            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+////                    .body("Transaction already exists with id: " + transactionDto.getId());
+//            return ResponseEntity.badRequest()
+//                    .body(new MessageResponse("Transaction already exists with id: " + transactionDto.getId()));
+//
+//        }
+//    }
+
+@PostMapping
+public ResponseEntity<?> saveTransaction(@RequestBody @Valid TransactionDto transactionDto) {
+    transactionDto.setId(null); // Гарантированно создаём новую
+
+    Optional<TransactionExchangeDto> response = transactionService.saveAndSendTransaction(transactionDto);
+    log.info("Transaction successfully processed and sent");
+    return ResponseEntity.ok(response);
+}
+
+
+
 
     @PutMapping("/{id}")
     public ResponseEntity<TransactionDto> updateTransaction(@PathVariable Long id, @RequestBody @Valid TransactionDto transactionDto) {

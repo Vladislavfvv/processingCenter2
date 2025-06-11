@@ -1,21 +1,36 @@
 package com.edme.processingCenter.services;
 
+import com.edme.commondto.dto.TransactionExchangeDto;
 import com.edme.processingCenter.dto.TransactionDto;
+import com.edme.processingCenter.dto.TransactionExchangeIbDto;
+import com.edme.processingCenter.dto.TransactionTypeDto;
 import com.edme.processingCenter.exceptions.ResourceNotFoundException;
 import com.edme.processingCenter.mappers.AccountMapper;
+import com.edme.processingCenter.mappers.TransactionExchangeMapper;
 import com.edme.processingCenter.mappers.TransactionMapper;
 import com.edme.processingCenter.mappers.TransactionTypeMapper;
 import com.edme.processingCenter.models.Transaction;
 import com.edme.processingCenter.repositories.TransactionRepository;
+import com.edme.processingCenter.services.feign.SalesPointClientService;
+import com.edme.processingCenter.services.rabbitMQ.IssuingBankClientService;
 import com.edme.processingCenter.utils.DelayForTestSwagger;
+import feign.FeignException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,12 +41,16 @@ import java.util.stream.Collectors;
 @Transactional
 public class TransactionService implements AbstractService<Long, TransactionDto> {
 
-
     private final TransactionRepository transactionRepository;
     private final TransactionMapper transactionMapper;
     private final TransactionTypeMapper transactionTypeMapper;
     private final AccountMapper accountMapper;
-
+    private final SalesPointClientService salesPointClientService;
+    private final IssuingBankClientService issuingBankClientService;
+    private final TransactionExchangeMapper transactionExchangeMapper;
+    private final AccountService accountService;
+    private final TransactionTypeService transactionTypeService;
+    private final RabbitTemplate rabbitTemplate;
 
     @Override
     @Transactional(readOnly = true)
@@ -65,6 +84,186 @@ public class TransactionService implements AbstractService<Long, TransactionDto>
         Transaction saved = transactionRepository.saveAndFlush(transactionMapper.toEntity(dto));
         log.info("Saved transaction: {}", saved);
         return Optional.ofNullable(transactionMapper.toDto(saved));
+    }
+
+
+//    public Optional<TransactionExchangeDto> saveAndSendTransaction(TransactionDto dto) {
+//        Optional<Transaction> exist = transactionRepository.findById(dto.getId());
+//        if (exist.isPresent()) {
+//            log.info("Transaction already exists with id: {}", dto.getId());
+//            return Optional.empty();
+//        }
+//
+//        dto.setId(null);
+//
+//        Transaction savedEntity = transactionRepository.saveAndFlush(transactionMapper.toEntity(dto));
+//        TransactionDto savedDto = transactionMapper.toDto(savedEntity);
+//
+//        // Маппинг в DTO для sales-point
+//        TransactionExchangeDto exchangeDto = transactionExchangeMapper.toExchangeDto(savedDto);
+//
+//        // Отправляем exchangeDto через Feign-клиент с retry
+//        String result = salesPointClientService.confirmPaymentWithRetry(exchangeDto);
+//        log.info("Transaction sent to sales-point: {}", result);
+//
+//        return Optional.of(exchangeDto);
+//    }
+
+//    public Optional<TransactionExchangeDto> saveAndSendTransaction(TransactionDto transactionDto) {
+//
+
+    /// /        if (transactionDto.getCard() == null || transactionDto.getCard().getId() == null) {
+    /// /            throw new IllegalArgumentException("Card ID must not be null");
+    /// /        }
+    /// /        if (transactionDto.getTransactionType() == null || transactionDto.getTransactionType().getId() == null) {
+    /// /            throw new IllegalArgumentException("TransactionType ID must not be null");
+    /// /        }
+    /// /        if (transactionDto.getTerminal() == null || transactionDto.getTerminal().getId() == null) {
+    /// /            throw new IllegalArgumentException("Terminal ID must not be null");
+    /// /        }
+    /// /        if (transactionDto.getResponseCode() == null || transactionDto.getResponseCode().getId() == null) {
+    /// /            throw new IllegalArgumentException("ResponseCode ID must not be null");
+    /// /        }
+    /// /        if (transactionDto.getAccount() == null || transactionDto.getAccount().getId() == null) {
+    /// /            throw new IllegalArgumentException("Account ID must not be null");
+    /// /        }
+    /// /
+    /// /
+    /// /        // 1. Сохраняем транзакцию в локальную БД
+    /// /        Transaction savedTransaction = transactionRepository.save(transactionMapper.toEntity(transactionDto));
+    /// /        log.info("Transaction saved locally with id: {}", savedTransaction.getId());
+    /// /
+    /// /        // 2. Обновляем баланс счета
+    /// /        updateAccountBalance(savedTransaction);
+//
+//        // Конвертируем TransactionDto в TransactionExchangeDto
+//        TransactionExchangeDto exchangeDto = convertToExchangeDto(transactionDto);
+//
+//        try {
+//            // Отправляем через Feign Client с retry
+//            TransactionExchangeDto response = salesPointClientService.sendTransactionWithRetry(exchangeDto);
+//            return Optional.of(response);
+//        } catch (Exception e) {
+//            log.error("Failed to send transaction to sales-point", e);
+//            return Optional.empty();
+//        }
+//    }
+
+//public Optional<TransactionExchangeDto> saveAndSendTransaction(TransactionDto transactionDto) {
+//    try {
+//        transactionDto.setId(null); // Дополнительная защита
+//
+//        Transaction savedTransaction = transactionRepository.save(transactionMapper.toEntity(transactionDto));
+//        log.info("Transaction saved locally with id: {}", savedTransaction.getId());
+//
+//        updateAccountBalance(savedTransaction);
+//
+//        TransactionExchangeDto exchangeDto = convertToExchangeDto(transactionDto);
+//
+//        TransactionExchangeDto response = salesPointClientService.sendTransactionWithRetry(exchangeDto);
+//        return Optional.of(response);
+//    } catch (Exception e) {
+//        log.error("Transaction processing failed: {}", e.getMessage(), e);
+//        return Optional.empty();
+//    }
+//}
+    public Optional<TransactionExchangeDto> saveAndSendTransaction(TransactionDto transactionDto) {
+        try {
+            transactionDto.setId(null); // Сбрасываем ID, чтобы создать новую
+            // Устанавливаем текущую дату:
+            transactionDto.setTransactionDate(LocalDate.now());
+            Transaction savedTransaction = transactionRepository.save(transactionMapper.toEntity(transactionDto));
+            log.info("Transaction saved locally with id: {}", savedTransaction.getId());
+
+            updateAccountBalance(savedTransaction);
+
+            TransactionExchangeDto exchangeDto = convertToExchangeDto(transactionDto);
+            TransactionExchangeIbDto transactionExchangeIbDto = convertToTransactionExchangeIbDto(transactionDto);
+            TransactionExchangeDto response = salesPointClientService.sendTransactionWithRetry(exchangeDto);
+            issuingBankClientService.sendTransactionWithRabbitMq(transactionExchangeIbDto);
+
+
+//                        rabbitTemplate.convertAndSend(
+//                    RabbitMQConfig.TRANSACTION_EXCHANGE,
+//                    RabbitMQConfig.TRANSACTION_ROUTING_KEY,
+//                    transactionExchangeIbDto
+//            );
+
+
+            return Optional.of(response);
+
+        } catch (FeignException fe) {
+            log.error("Failed to send transaction to sales-point (Feign): {}", fe.getMessage(), fe);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Failed to forward transaction to sales-point", fe);
+        } catch (DataIntegrityViolationException dive) {
+            log.error("Transaction already exists or violates DB constraints: {}", dive.getMessage(), dive);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Transaction violates constraints", dive);
+        } catch (Exception e) {
+            log.error("Unexpected error during transaction processing: {}", e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error", e);
+        }
+    }
+
+    private void updateAccountBalance(Transaction transaction) {
+        if (transaction.getTransactionType() == null || transaction.getTransactionType().getId() == null) {
+            log.error("TransactionType or its ID is null for transaction id: {}", transaction.getId());
+            throw new IllegalArgumentException("TransactionType or its ID is null");
+        }
+        Long itemId = transaction.getTransactionType().getId();
+
+        Optional<TransactionTypeDto> tt = transactionTypeService.findById(itemId);
+        String operator = null;
+        if (tt.isPresent()) {
+            operator = tt.get().getOperator();
+        } else {
+            log.error("TransactionType not found for id: {}", transaction.getTransactionType().getId());
+            throw new EntityNotFoundException("TransactionType not found");
+        }
+
+        if (operator != null) {
+            operator = operator.trim();
+        }
+
+        BigDecimal amount = transaction.getSum();
+
+        log.info("Transaction operator: '{}', amount: {}", operator, amount);
+
+        if ("-".equals(operator)) {
+            accountService.withdraw(transaction.getAccount().getId(), amount);
+        } else {
+            accountService.deposit(transaction.getAccount().getId(), amount);
+        }
+    }
+
+    private TransactionExchangeDto convertToExchangeDto(TransactionDto dto) {
+        TransactionExchangeDto exchangeDto = new TransactionExchangeDto();
+        // маппинг полей
+        exchangeDto.setId(dto.getId());
+        exchangeDto.setTransactionDate(dto.getTransactionDate());
+        exchangeDto.setSum(dto.getSum());
+        exchangeDto.setTransactionTypeId(dto.getTransactionType().getId());
+        exchangeDto.setCardId(dto.getCard().getId());
+        exchangeDto.setAuthorizationCode(dto.getAuthorizationCode());
+        exchangeDto.setResponseCodeId(dto.getResponseCode().getId());
+        exchangeDto.setTerminalId(dto.getTerminal().getId());
+        return exchangeDto;
+    }
+
+
+    private TransactionExchangeIbDto convertToTransactionExchangeIbDto(TransactionDto dto) {
+        TransactionExchangeIbDto transactionExchangeIbDto = new TransactionExchangeIbDto();
+        // маппинг полей
+        transactionExchangeIbDto.setId(dto.getId());
+        transactionExchangeIbDto.setTransactionDate(Date.valueOf(dto.getTransactionDate()));
+        transactionExchangeIbDto.setSum(dto.getSum());
+        transactionExchangeIbDto.setTransactionType(dto.getTransactionType().getId());
+        transactionExchangeIbDto.setAccount(dto.getAccount().getId());
+        transactionExchangeIbDto.setTransactionName(dto.getTransactionName());
+        //transactionExchangeIbDto.setReceivedFromProcessingCenter(Timestamp.valueOf(LocalDateTime.now()));
+        transactionExchangeIbDto.setReceivedFromProcessingCenter(OffsetDateTime.now());
+        //transactionExchangeIbDto.setSentToProcessingCenter(Timestamp.valueOf(LocalDateTime.now()));
+        transactionExchangeIbDto.setSentToProcessingCenter(OffsetDateTime.now());
+        return transactionExchangeIbDto;
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.edme.processingCenter.dto.TransactionDto;
 import com.edme.processingCenter.models.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring", uses = {
 //        TransactionType.class,
@@ -22,6 +23,8 @@ import org.mapstruct.Mapping;
         AcquiringBankMapper.class
 })
 public interface TransactionMapper {
+
+    TransactionMapper INSTANCE = Mappers.getMapper(TransactionMapper.class);
 
     @Mapping(source = "account", target = "account")
     @Mapping(source = "card", target = "card")

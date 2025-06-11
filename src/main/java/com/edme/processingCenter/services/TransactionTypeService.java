@@ -39,7 +39,7 @@ public class TransactionTypeService implements AbstractService<Long, Transaction
     }
 
     @Override
-    @Cacheable(value = "transactionTypeByIdCache", key = "#id")
+            @Cacheable(value = "transactionTypeByIdCache", key = "#id", condition = "#id != null")
     public Optional<TransactionTypeDto> findById(Long aLong) {
         DelayForTestSwagger.simulateSlowService();
         return transactionTypesRepository.findById(aLong)

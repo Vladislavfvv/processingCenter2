@@ -1,6 +1,7 @@
 package com.edme.processingCenter.dto;
 
 import com.edme.processingCenter.models.Account;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -44,8 +45,9 @@ public class TransactionDto {
     @NotBlank(message = "authorizationCode is required")
     @Size(min = 6, max = 6, message = "authorizationCode must be exactly 6 characters")
     private String authorizationCode;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp receivedFromIssuingBank;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp sentToIssuingBank;
-
 }
 

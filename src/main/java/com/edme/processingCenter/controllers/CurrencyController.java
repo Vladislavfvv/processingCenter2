@@ -3,6 +3,7 @@ package com.edme.processingCenter.controllers;
 import com.edme.processingCenter.dto.CurrencyDto;
 import com.edme.processingCenter.services.CurrencyService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,11 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/currencies")
 public class CurrencyController {
 
-    private CurrencyService currencyService;
+    private final CurrencyService currencyService;
 
     @GetMapping
     public ResponseEntity<List<CurrencyDto>> getAllCurrencies() {

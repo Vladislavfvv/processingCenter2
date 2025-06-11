@@ -20,58 +20,36 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableMethodSecurity //поддержка аннотаций безопасности
 public class SecurityConfig {
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf().disable()
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")  // проверяет наличие ROLE_ADMIN
-//                        .requestMatchers("/user/**").hasRole("USER")    // проверяет наличие ROLE_USER
-//                        .anyRequest().authenticated()
-//                )
-//                .formLogin()
-//                .and()
-//                .logout();
-//
-//        return http.build();
-//    }
 
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/user/**").hasRole("USER")
-//                        .anyRequest().authenticated()
-//                )
-//                .formLogin(form -> form
-//                        .successHandler(successHandler)
-////                .formLogin(Customizer.withDefaults()) переход на /
-//                .logout(Customizer.withDefaults())    // теперь так
-//                .csrf(csrf -> csrf.disable()));        // теперь так
-//
-//        return http.build();
-//    }
 
 @Bean
 public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/register", "/login", "/css/**", "/js/**").permitAll()
-                    .requestMatchers("/public/**").permitAll()      // Публичные маршруты
-                    .requestMatchers("/admin/**").hasRole("ADMIN")  //Только для ADMIN
-                    .requestMatchers("/user/**").hasRole("USER")    //USER и ADMIN
-                    .anyRequest().authenticated()                   //  Остальное требует авторизации
+                    .anyRequest().permitAll() // временно открыть всё
+//                    .requestMatchers(
+//                            "/swagger-ui/**",
+//                            "/swagger-ui.html",
+//                            "/v3/api-docs/**",
+//                            "/v3/api-docs",
+//                            "/api/**").permitAll() // временно открыть всё API
+//                    .requestMatchers("/register", "/login", "/css/**", "/js/**").permitAll()
+//                    .requestMatchers("/public/**").permitAll()      // Публичные маршруты
+//                    .requestMatchers("/admin/**").hasRole("ADMIN")  //Только для ADMIN
+//                    .requestMatchers("/user/**").hasRole("USER")    //USER и ADMIN
+              //      .anyRequest().authenticated()                   //  Остальное требует авторизации
             )
-            .formLogin(form -> form
-                    .loginPage("/login")                   // указать страницу логина явно
+//            .formLogin(form -> form
+//                    .loginPage("/login")                   // указать страницу логина явно
+//
+//                    .permitAll()                            // разрешить всем доступ к форме логина
+//            )
+//            .httpBasic(Customizer.withDefaults()) // <-- разрешаем  basic auth
+//            .logout(Customizer.withDefaults())
+               .csrf(csrf -> csrf.disable())//; // для REST можно отключить CSRF
+            // .httpBasic(Customizer.withDefaults())
+    ;
 
-                    .permitAll()                            // разрешить всем доступ к форме логина
-            )
-            .httpBasic(Customizer.withDefaults()) // <-- разрешаем  basic auth
-            .logout(Customizer.withDefaults())
-            .csrf(csrf -> csrf.disable()); // для REST можно отключить CSRF
 
     return http.build();
 }

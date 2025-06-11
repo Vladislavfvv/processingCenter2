@@ -1,6 +1,7 @@
 package com.edme.processingCenter.services;
 
 import com.edme.processingCenter.dto.AccountDto;
+import com.edme.processingCenter.exceptions.InsufficientFundsException;
 import com.edme.processingCenter.exceptions.ResourceNotFoundException;
 import com.edme.processingCenter.mappers.AccountMapper;
 import com.edme.processingCenter.mappers.CurrencyMapper;
@@ -11,13 +12,13 @@ import com.edme.processingCenter.utils.DelayForTestSwagger;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -167,6 +168,40 @@ public class AccountService  implements AbstractService<Long, AccountDto>{
             log.warn("Table accounts not initialized, cause: {}", e.getMessage());
             return false;
         }
+    }
+
+//    @Transactional
+//    public void withdraw(Long accountId, BigDecimal amount) {
+//        Account account = accountRepository.findById(accountId)
+//                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+//        account.setBalance(account.getBalance().subtract(amount));
+//        accountRepository.save(account);
+//    }
+
+    @Transactional
+    public void withdraw(Long accountId, BigDecimal amount) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+
+        // проверяем, что на счету достаточно средств
+        if (account.getBalance().compareTo(amount) < 0) {
+            // можно бросить своё исключение или использовать стандартное
+            throw new InsufficientFundsException(
+                    String.format("Insufficient balance: current=%s, requested=%s",
+                            account.getBalance(), amount)
+            );
+        }
+
+        account.setBalance(account.getBalance().subtract(amount));
+        accountRepository.save(account);
+    }
+
+    @Transactional
+    public void deposit(Long accountId, BigDecimal amount) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+        account.setBalance(account.getBalance().add(amount));
+        accountRepository.save(account);
     }
 
 }
