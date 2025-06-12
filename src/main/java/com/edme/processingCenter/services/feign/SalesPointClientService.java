@@ -4,8 +4,10 @@ import com.edme.common.exceptions.EmptyResponseException;
 import com.edme.common.exceptions.ServerErrorException;
 import com.edme.commondto.dto.TransactionExchangeDto;
 import com.edme.processingCenter.client.SalesPointClient;
+import feign.Retryer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 public class SalesPointClientService {
     private final SalesPointClient salesPointClient;
     private final RetryTemplate retryTemplate;
+    private final SalesPointFallback salesPointFallback;
+
 
     //    public String confirmPaymentWithRetry(PaymentRequest request) {
 //        return retryTemplate.execute(context -> {
@@ -90,5 +94,38 @@ public class SalesPointClientService {
                 }
         );
     }
+
+
+//    //вариант без вылета исключения ServerErrorException
+//    public TransactionExchangeDto sendTransactionWithRetry(TransactionExchangeDto dto) {
+//        log.info("Attempting to send transaction to SalesPoint: {}", dto);
+//
+//        return retryTemplate.execute(
+//                // ================================================
+//                // основная логика попытки
+//                // ================================================
+//                context -> {
+//                    int attempt = context.getRetryCount() + 1;
+//                    log.info("Retry attempt #{} to send transaction to SalesPoint", attempt);
+//                    TransactionExchangeDto response = salesPointClient.sendTransaction(dto);
+//                    if (response == null) {
+//                        log.warn("Received null response on attempt #{}", attempt);
+//                        throw new EmptyResponseException("Empty response from SalesPoint");
+//                    }
+//                    log.info("Transaction successfully sent on attempt #{}", attempt);
+//                    return response;
+//                },
+//                // ================================================
+//                // recovery callback — срабатывает после исчерпания retries
+//                // ================================================
+//                context -> {
+//                    Throwable last = context.getLastThrowable();
+//                    log.warn("Retries exhausted after {} attempts, last error: {}. Applying fallback.",
+//                            context.getRetryCount(), last.getMessage());
+//                    // вместо броска, возвращаем результат из SalesPointFallback
+//                    return salesPointFallback.sendTransaction(dto);
+//                }
+//        );
+//    }
 }
 
