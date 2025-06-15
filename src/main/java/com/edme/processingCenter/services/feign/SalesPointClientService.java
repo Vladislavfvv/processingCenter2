@@ -5,6 +5,7 @@ import com.edme.common.exceptions.ServerErrorException;
 import com.edme.commondto.dto.TransactionExchangeDto;
 import com.edme.processingCenter.client.SalesPointClient;
 import feign.Retryer;
+import io.opentelemetry.api.trace.Span;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -62,6 +63,7 @@ public class SalesPointClientService {
     public TransactionExchangeDto sendTransactionWithRetry(TransactionExchangeDto dto) {
         log.info("Attempting to send transaction to SalesPoint: {}", dto);
         //RetryTemplate, который автоматизирует повторные попытки, вызывает основной блок
+        Span span = Span.current();
         return retryTemplate.execute(
                 context -> {
                     //подсчет попыток отправки

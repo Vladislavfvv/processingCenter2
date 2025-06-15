@@ -35,21 +35,39 @@
 <!--		<spring-cloud.version>2023.0.1</spring-cloud.version>-->
 		<spring-cloud.version>2024.0.0</spring-cloud.version>
 <!--		<mapstruct>1.6.2</mapstruct>-->
+<!--		<opentelemetry.version>1.43.0</opentelemetry.version>-->
+		<opentelemetry.version>1.34.1</opentelemetry.version>
+		<keycloak.version>24.0.3</keycloak.version>
 	</properties>
+<!--	<repositories>-->
+<!--		<repository>-->
+<!--			<id>otel-earlyaccess</id>-->
+<!--			<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+<!--		</repository>-->
+<!--	</repositories>-->
 
-<!--	<dependencyManagement>-->
-<!--		<dependencies>-->
-<!--			<dependency>-->
-<!--				<groupId>org.springframework.cloud</groupId>-->
-<!--				<artifactId>spring-cloud-dependencies</artifactId>-->
-<!--				<version>${spring-cloud.version}</version>-->
-<!--				<type>pom</type>-->
-<!--				<scope>import</scope>-->
-<!--			</dependency>-->
-<!--		</dependencies>-->
-<!--	</dependencyManagement>-->
 
 	<dependencies>
+
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-spring-boot-starter</artifactId>
+<!--						<version>24.0.3</version>-->
+			<version>${keycloak.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+<!--			<version></version>-->
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+			<!--			<version></version>-->
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-amqp</artifactId>
@@ -97,6 +115,10 @@
 		<dependency>
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-rabbit-stream</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
 		</dependency>
 <!--		<dependency>-->
 <!--			<groupId>org.springframework.kafka</groupId>-->
@@ -234,6 +256,230 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jdk8</artifactId>
+			<version>2.15.2</version> <!-- или вашу версию Jackson -->
+		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry</groupId>-->
+<!--			<artifactId>opentelemetry-exporter-jaeger</artifactId>-->
+<!--			<version>1.34.1</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry</groupId>-->
+<!--			<artifactId>opentelemetry-sdk</artifactId>-->
+<!--			<version>1.50.0</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry.instrumentation</groupId>-->
+<!--			<artifactId>opentelemetry-spring-boot-starter</artifactId>-->
+<!--			<version>1.22.1</version>-->
+<!--		</dependency>-->
+
+<!--		&lt;!&ndash; SDK &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry</groupId>-->
+<!--			<artifactId>opentelemetry-sdk</artifactId>-->
+<!--&lt;!&ndash;			<version>1.34.1</version> &lt;!&ndash; подходит для OTEL agent 2.3.0 &ndash;&gt;&ndash;&gt;-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry.instrumentation</groupId>-->
+<!--			<artifactId>opentelemetry-spring-boot</artifactId>-->
+<!--&lt;!&ndash;			<version>1.32.0-alpha</version>&ndash;&gt;-->
+<!--		</dependency>-->
+<!--		&lt;!&ndash; Jaeger Exporter &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry</groupId>-->
+<!--			<artifactId>opentelemetry-exporter-jaeger</artifactId>-->
+<!--&lt;!&ndash;			<version>1.34.1</version>&ndash;&gt;-->
+<!--		</dependency>-->
+
+		<!-- Spring Boot Starter -->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry.instrumentation</groupId>-->
+<!--			<artifactId>opentelemetry-spring-boot-starter</artifactId>-->
+<!--&lt;!&ndash;			<version>2.3.0</version>&ndash;&gt;-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry.instrumentation</groupId>-->
+<!--			<artifactId>opentelemetry-spring-boot-autoconfigure</artifactId>-->
+<!--			<version>2.16.0</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry.instrumentation</groupId>-->
+<!--			<artifactId>opentelemetry-spring-boot-starter</artifactId>-->
+<!--			<version>2.16.0</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry</groupId>-->
+<!--			<artifactId>opentelemetry-exporter-jaeger</artifactId>-->
+<!--			<version>1.32.0</version>-->
+<!--		</dependency>-->
+
+		<!--variant3-->
+		<!-- SDK -->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry</groupId>-->
+<!--			<artifactId>opentelemetry-sdk</artifactId>-->
+<!--			<version>1.34.1</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry.instrumentation</groupId>-->
+<!--			<artifactId>opentelemetry-spring-boot</artifactId>-->
+<!--			<version>1.32.0-alpha</version>-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry</groupId>-->
+<!--			<artifactId>opentelemetry-exporter-otlp</artifactId>-->
+<!--			<version>1.34.1</version>-->
+<!--		</dependency>-->
+
+<!--		&lt;!&ndash; Jaeger Exporter &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry</groupId>-->
+<!--			<artifactId>opentelemetry-exporter-jaeger</artifactId>-->
+<!--			<version>1.32.0</version>-->
+<!--		</dependency>-->
+		<!--variant3-->
+
+		<!-- Spring Boot Autoconfig -->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry.instrumentation</groupId>-->
+<!--			<artifactId>opentelemetry-spring-boot-autoconfigure</artifactId>-->
+<!--			<version>2.16.0</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>io.opentracing.contrib</groupId>-->
+<!--			<artifactId>opentracing-spring-jaeger-web-starter</artifactId>-->
+<!--			<version>3.3.1</version>-->
+<!--		</dependency>-->
+
+
+		<!--Variant4 -->
+		<!-- Starter для автоматической настройки OpenTelemetry в Spring Boot -->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry.instrumentation</groupId>-->
+<!--			<artifactId>opentelemetry-spring-boot-starter</artifactId>-->
+<!--			<version>1.34.1</version>-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter</artifactId>-->
+<!--			<version>3.4.0</version>-->
+<!--		</dependency>-->
+
+
+
+		<!-- Variant5 -->
+<!--		&lt;!&ndash; OpenTelemetry SDK &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry</groupId>-->
+<!--			<artifactId>opentelemetry-sdk</artifactId>-->
+<!--			<version>${opentelemetry.version}</version>-->
+<!--&lt;!&ndash;			<version>1.34.1</version>&ndash;&gt;-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry</groupId>-->
+<!--			<artifactId>opentelemetry-exporter-jaeger</artifactId>-->
+<!--			<version>${opentelemetry.version}</version>-->
+<!--&lt;!&ndash;			<version>1.34.1</version>&ndash;&gt;-->
+<!--		</dependency>-->
+
+<!--		&lt;!&ndash; OpenTelemetry API &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry</groupId>-->
+<!--			<artifactId>opentelemetry-api</artifactId>-->
+<!--			<version>${opentelemetry.version}</version>-->
+<!--&lt;!&ndash;			<version>1.34.1</version>&ndash;&gt;-->
+<!--		</dependency>-->
+
+<!--		&lt;!&ndash; OpenTelemetry context propagation &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry</groupId>-->
+<!--			<artifactId>opentelemetry-context</artifactId>-->
+<!--			<version>${opentelemetry.version}</version>-->
+<!--&lt;!&ndash;			<version>1.34.1</version>&ndash;&gt;-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry</groupId>-->
+<!--			<artifactId>opentelemetry-sdk-extension-autoconfigure</artifactId>-->
+<!--			<version>${opentelemetry.version}</version>-->
+<!--&lt;!&ndash;			<version>1.34.1</version>&ndash;&gt;-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>org.slf4j</groupId>-->
+<!--			<artifactId>jul-to-slf4j</artifactId>-->
+<!--			<version>2.0.13</version>-->
+<!--		</dependency>-->
+<!--		-->
+
+		<!-- Variant5 -->
+<!--		&lt;!&ndash; Exporter: OTLP (для Collector, Jaeger, Grafana и пр.) &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry</groupId>-->
+<!--			<artifactId>opentelemetry-exporter-otlp</artifactId>-->
+<!--			<version>${opentelemetry.version}</version>-->
+<!--&lt;!&ndash;			<version>1.34.1</version>&ndash;&gt;-->
+<!--		</dependency>-->
+
+		<!-- Optional: SLF4J bridge to see OpenTelemetry logs in your logging system -->
+<!--VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV-->
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-sdk</artifactId>
+			<version>${opentelemetry.version}</version>
+			<!--			<version>1.34.1</version>-->
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-spring-boot</artifactId>
+			<version>1.32.0-alpha</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.opentracing.contrib</groupId>
+			<artifactId>opentracing-spring-jaeger-web-starter</artifactId>
+			<version>3.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-exporter-otlp</artifactId>
+			<version>${opentelemetry.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-exporter-jaeger</artifactId>
+			<version>${opentelemetry.version}</version>
+			<!--			<version>1.34.1</version>-->
+		</dependency>
+		<!-- OpenTelemetry API -->
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-api</artifactId>
+			<version>${opentelemetry.version}</version>
+			<!--			<version>1.34.1</version>-->
+		</dependency>
+
+		<!-- OpenTelemetry context propagation -->
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-context</artifactId>
+			<version>${opentelemetry.version}</version>
+			<!--			<version>1.34.1</version>-->
+		</dependency>
+<!--VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV-->
+<!--		<dependency>-->
+<!--			<groupId>io.opentelemetry</groupId>-->
+<!--			<artifactId>opentelemetry-sdk-extension-autoconfigure</artifactId>-->
+<!--			<version>1.34.1</version>-->
+<!--		</dependency>-->
 
 
 	</dependencies>
@@ -247,6 +493,14 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+<!--			<dependency>-->
+<!--				<groupId>io.opentelemetry.instrumentation</groupId>-->
+<!--				<artifactId>opentelemetry-bom-alpha</artifactId>-->
+<!--				<artifactId>opentelemetry-bom-alpha</artifactId>-->
+<!--				<version>2.3.0</version>-->
+<!--				<type>pom</type>-->
+<!--				<scope>import</scope>-->
+<!--			</dependency>-->
 		</dependencies>
 	</dependencyManagement>
 

@@ -15,10 +15,17 @@ import com.edme.processingCenter.services.feign.SalesPointClientService;
 import com.edme.processingCenter.services.rabbitMQ.IssuingBankClientService;
 import com.edme.processingCenter.utils.DelayForTestSwagger;
 import feign.FeignException;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanContext;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -51,6 +58,10 @@ public class TransactionService implements AbstractService<Long, TransactionDto>
     private final AccountService accountService;
     private final TransactionTypeService transactionTypeService;
     private final RabbitTemplate rabbitTemplate;
+    private final Tracer tracer;
+
+    //Tracer tracer = GlobalOpenTelemetry.getTracer("processing-center");
+
 
     @Override
     @Transactional(readOnly = true)
@@ -168,7 +179,9 @@ public class TransactionService implements AbstractService<Long, TransactionDto>
 //    }
 //}
     public Optional<TransactionExchangeDto> saveAndSendTransaction(TransactionDto transactionDto) {
-        try {
+        Span span = tracer.spanBuilder("saveAndSendTransaction").startSpan();
+        try(Scope scope = span.makeCurrent()) {
+            span.setAttribute("processing-center", "создание транзакции");
             transactionDto.setId(null); // Сбрасываем ID, чтобы создать новую
             // Устанавливаем текущую дату:
             transactionDto.setTransactionDate(LocalDate.now());
@@ -179,7 +192,18 @@ public class TransactionService implements AbstractService<Long, TransactionDto>
 
             TransactionExchangeDto exchangeDto = convertToExchangeDto(transactionDto);
             TransactionExchangeIbDto transactionExchangeIbDto = convertToTransactionExchangeIbDto(transactionDto);
+
+
+            SpanContext spanContext = span.getSpanContext();
+            if (spanContext.isValid()) {
+                String message = "00-" + spanContext.getTraceId() + "-" + spanContext.getSpanId() + "-01";
+
+                log.info("Отправляем message:{}", message);
+            } else {
+                log.warn("Не удалось получить message");
+            }
             TransactionExchangeDto response = salesPointClientService.sendTransactionWithRetry(exchangeDto);
+            transactionExchangeIbDto.setId(savedTransaction.getId()); // ← ЭТО ВАЖНО
             issuingBankClientService.sendTransactionWithRabbitMq(transactionExchangeIbDto);
 
 
@@ -193,16 +217,84 @@ public class TransactionService implements AbstractService<Long, TransactionDto>
             return Optional.of(response);
 
         } catch (FeignException fe) {
+            span.recordException(fe);
             log.error("Failed to send transaction to sales-point (Feign): {}", fe.getMessage(), fe);
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Failed to forward transaction to sales-point", fe);
         } catch (DataIntegrityViolationException dive) {
+            span.recordException(dive);
             log.error("Transaction already exists or violates DB constraints: {}", dive.getMessage(), dive);
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Transaction violates constraints", dive);
         } catch (Exception e) {
+            span.setStatus(StatusCode.ERROR);
+            span.recordException(e);
             log.error("Unexpected error during transaction processing: {}", e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error", e);
+             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error", e);
+        }
+        finally {
+            span.end();
         }
     }
+
+
+//public Optional<TransactionExchangeDto> saveAndSendTransaction(TransactionDto transactionDto) {
+//    Span span = tracer.spanBuilder("saveAndSendTransaction").startSpan();
+//    try(Scope scope = span.makeCurrent()) {
+//        span.setAttribute("processing-center", "создание транзакции");
+//        transactionDto.setId(null); // Сбрасываем ID, чтобы создать новую
+//        // Устанавливаем текущую дату:
+//        transactionDto.setTransactionDate(LocalDate.now());
+//        Transaction savedTransaction = transactionRepository.save(transactionMapper.toEntity(transactionDto));
+//        log.info("Transaction saved locally with id: {}", savedTransaction.getId());
+//
+//        updateAccountBalance(savedTransaction);
+//
+//        TransactionExchangeDto exchangeDto = convertToExchangeDto(transactionDto);
+//        TransactionExchangeIbDto transactionExchangeIbDto = convertToTransactionExchangeIbDto(transactionDto);
+//
+//
+//        SpanContext spanContext = span.getSpanContext();
+//        if (spanContext.isValid()) {
+//            String message = "00-" + spanContext.getTraceId() + "-" + spanContext.getSpanId() + "-01";
+//
+//            log.info("Отправляем message:{}", message);
+//        } else {
+//            log.warn("Не удалось получить message");
+//        }
+//        TransactionExchangeDto response = salesPointClientService.sendTransactionWithRetry(exchangeDto);
+//        transactionExchangeIbDto.setId(savedTransaction.getId()); // ← ЭТО ВАЖНО
+//        issuingBankClientService.sendTransactionWithRabbitMq(transactionExchangeIbDto);
+//
+//
+////                        rabbitTemplate.convertAndSend(
+////                    RabbitMQConfig.TRANSACTION_EXCHANGE,
+////                    RabbitMQConfig.TRANSACTION_ROUTING_KEY,
+////                    transactionExchangeIbDto
+////            );
+//
+//
+//        return Optional.of(response);
+//
+//    } catch (FeignException fe) {
+//        span.recordException(fe);
+//        log.error("Failed to send transaction to sales-point (Feign): {}", fe.getMessage(), fe);
+//        throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Failed to forward transaction to sales-point", fe);
+//    } catch (DataIntegrityViolationException dive) {
+//        span.recordException(dive);
+//        log.error("Transaction already exists or violates DB constraints: {}", dive.getMessage(), dive);
+//        throw new ResponseStatusException(HttpStatus.CONFLICT, "Transaction violates constraints", dive);
+//    } catch (Exception e) {
+//        span.setStatus(StatusCode.ERROR);
+//        span.recordException(e);
+//        log.error("Unexpected error during transaction processing: {}", e.getMessage(), e);
+//        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error", e);
+//    }
+//    finally {
+//        span.end();
+//    }
+//}
+
+
+
 
     private void updateAccountBalance(Transaction transaction) {
         if (transaction.getTransactionType() == null || transaction.getTransactionType().getId() == null) {
