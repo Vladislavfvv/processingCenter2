@@ -41,27 +41,6 @@ public class TransactionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-//    @PostMapping
-//    public ResponseEntity<?> saveTransaction(@RequestBody @Valid TransactionDto transactionDto) {
-//        return ResponseEntity.ok(transactionService.save(transactionDto));
-//    }
-
-//    @PostMapping
-//    public ResponseEntity<?> saveTransaction(@RequestBody @Valid TransactionDto transactionDto) {
-//        // Обнуляем ID перед сохранением
-//        transactionDto.setId(null);
-//        Optional<TransactionExchangeDto> result = transactionService.saveAndSendTransaction(transactionDto);
-//        log.info("Try to received Feign request");
-//        if (result.isPresent()) {
-//            return ResponseEntity.ok(result.get());
-//        } else {
-////            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-////                    .body("Transaction already exists with id: " + transactionDto.getId());
-//            return ResponseEntity.badRequest()
-//                    .body(new MessageResponse("Transaction already exists with id: " + transactionDto.getId()));
-//
-//        }
-//    }
 
 @PostMapping
 public ResponseEntity<?> saveTransaction(@RequestBody @Valid TransactionDto transactionDto) {

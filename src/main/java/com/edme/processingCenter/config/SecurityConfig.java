@@ -49,13 +49,13 @@ public class SecurityConfig {
                                 .requestMatchers("/api/**").hasRole("admin")
                                 // // Остальные запросы требуют аутентификацию
                                 .anyRequest().authenticated()
-                                //SessionCreationPolicy.STATELESS  означает:
+                        //SessionCreationPolicy.STATELESS  означает:
                         // Spring Security не будет создавать HTTP-сессии (например, HttpSession).
                         //Каждому запросу требуется токен аутентификации (в твоём случае — JWT от Keycloak).
                 ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        //Говорит Spring Security, что это приложение является ресурс-сервером OAuth2, который будет принимать JWT-токены (в данном случае от Keycloak)
+                //Говорит Spring Security, что это приложение является ресурс-сервером OAuth2, который будет принимать JWT-токены (в данном случае от Keycloak)
                 .oauth2ResourceServer(
-                //.jwtAuthenticationConverter(...) настраивает специальный конвертер, чтобы преобразовать поля JWT в GrantedAuthority
+                        //.jwtAuthenticationConverter(...) настраивает специальный конвертер, чтобы преобразовать поля JWT в GrantedAuthority
 //                        OAuth2ResourceServerConfigurer::jwt)
                         resourceServer -> resourceServer.jwt(
                                 jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(
@@ -74,47 +74,4 @@ public class SecurityConfig {
         return converter;
     }
 
-
-//@Bean
-//public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//    http
-//            .authorizeHttpRequests(auth -> auth
-//                    .anyRequest().permitAll() // временно открыть всё
-////                    .requestMatchers(
-////                            "/swagger-ui/**",
-////                            "/swagger-ui.html",
-////                            "/v3/api-docs/**",
-////                            "/v3/api-docs",
-////                            "/api/**").permitAll() // временно открыть всё API
-////                    .requestMatchers("/register", "/login", "/css/**", "/js/**").permitAll()
-////                    .requestMatchers("/public/**").permitAll()      // Публичные маршруты
-////                    .requestMatchers("/admin/**").hasRole("ADMIN")  //Только для ADMIN
-////                    .requestMatchers("/user/**").hasRole("USER")    //USER и ADMIN
-//              //      .anyRequest().authenticated()                   //  Остальное требует авторизации
-//            )
-////            .formLogin(form -> form
-////                    .loginPage("/login")                   // указать страницу логина явно
-////
-////                    .permitAll()                            // разрешить всем доступ к форме логина
-////            )
-////            .httpBasic(Customizer.withDefaults()) // <-- разрешаем  basic auth
-////            .logout(Customizer.withDefaults())
-//               .csrf(csrf -> csrf.disable())//; // для REST можно отключить CSRF
-//            // .httpBasic(Customizer.withDefaults())
-//    ;
-//
-//
-//    return http.build();
-//}
-//
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//       return new BCryptPasswordEncoder();
-//        // return NoOpPasswordEncoder.getInstance(); // только для тестов
-//    }
-//
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-//        return configuration.getAuthenticationManager();
-//    }
 }

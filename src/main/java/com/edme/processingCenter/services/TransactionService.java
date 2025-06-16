@@ -100,86 +100,6 @@ public class TransactionService implements AbstractService<Long, TransactionDto>
     }
 
 
-//    public Optional<TransactionExchangeDto> saveAndSendTransaction(TransactionDto dto) {
-//        Optional<Transaction> exist = transactionRepository.findById(dto.getId());
-//        if (exist.isPresent()) {
-//            log.info("Transaction already exists with id: {}", dto.getId());
-//            return Optional.empty();
-//        }
-//
-//        dto.setId(null);
-//
-//        Transaction savedEntity = transactionRepository.saveAndFlush(transactionMapper.toEntity(dto));
-//        TransactionDto savedDto = transactionMapper.toDto(savedEntity);
-//
-//        // Маппинг в DTO для sales-point
-//        TransactionExchangeDto exchangeDto = transactionExchangeMapper.toExchangeDto(savedDto);
-//
-//        // Отправляем exchangeDto через Feign-клиент с retry
-//        String result = salesPointClientService.confirmPaymentWithRetry(exchangeDto);
-//        log.info("Transaction sent to sales-point: {}", result);
-//
-//        return Optional.of(exchangeDto);
-//    }
-
-//    public Optional<TransactionExchangeDto> saveAndSendTransaction(TransactionDto transactionDto) {
-//
-
-    /// /        if (transactionDto.getCard() == null || transactionDto.getCard().getId() == null) {
-    /// /            throw new IllegalArgumentException("Card ID must not be null");
-    /// /        }
-    /// /        if (transactionDto.getTransactionType() == null || transactionDto.getTransactionType().getId() == null) {
-    /// /            throw new IllegalArgumentException("TransactionType ID must not be null");
-    /// /        }
-    /// /        if (transactionDto.getTerminal() == null || transactionDto.getTerminal().getId() == null) {
-    /// /            throw new IllegalArgumentException("Terminal ID must not be null");
-    /// /        }
-    /// /        if (transactionDto.getResponseCode() == null || transactionDto.getResponseCode().getId() == null) {
-    /// /            throw new IllegalArgumentException("ResponseCode ID must not be null");
-    /// /        }
-    /// /        if (transactionDto.getAccount() == null || transactionDto.getAccount().getId() == null) {
-    /// /            throw new IllegalArgumentException("Account ID must not be null");
-    /// /        }
-    /// /
-    /// /
-    /// /        // 1. Сохраняем транзакцию в локальную БД
-    /// /        Transaction savedTransaction = transactionRepository.save(transactionMapper.toEntity(transactionDto));
-    /// /        log.info("Transaction saved locally with id: {}", savedTransaction.getId());
-    /// /
-    /// /        // 2. Обновляем баланс счета
-    /// /        updateAccountBalance(savedTransaction);
-//
-//        // Конвертируем TransactionDto в TransactionExchangeDto
-//        TransactionExchangeDto exchangeDto = convertToExchangeDto(transactionDto);
-//
-//        try {
-//            // Отправляем через Feign Client с retry
-//            TransactionExchangeDto response = salesPointClientService.sendTransactionWithRetry(exchangeDto);
-//            return Optional.of(response);
-//        } catch (Exception e) {
-//            log.error("Failed to send transaction to sales-point", e);
-//            return Optional.empty();
-//        }
-//    }
-
-//public Optional<TransactionExchangeDto> saveAndSendTransaction(TransactionDto transactionDto) {
-//    try {
-//        transactionDto.setId(null); // Дополнительная защита
-//
-//        Transaction savedTransaction = transactionRepository.save(transactionMapper.toEntity(transactionDto));
-//        log.info("Transaction saved locally with id: {}", savedTransaction.getId());
-//
-//        updateAccountBalance(savedTransaction);
-//
-//        TransactionExchangeDto exchangeDto = convertToExchangeDto(transactionDto);
-//
-//        TransactionExchangeDto response = salesPointClientService.sendTransactionWithRetry(exchangeDto);
-//        return Optional.of(response);
-//    } catch (Exception e) {
-//        log.error("Transaction processing failed: {}", e.getMessage(), e);
-//        return Optional.empty();
-//    }
-//}
     @CacheEvict(value = {"allTransactionsCache", "transactionByIdCache"}, allEntries = true)
     public Optional<TransactionExchangeDto> saveAndSendTransaction(TransactionDto transactionDto) {
         Span span = tracer.spanBuilder("saveAndSendTransaction").startSpan();
@@ -210,11 +130,6 @@ public class TransactionService implements AbstractService<Long, TransactionDto>
             issuingBankClientService.sendTransactionWithRabbitMq(transactionExchangeIbDto);
 
 
-//                        rabbitTemplate.convertAndSend(
-//                    RabbitMQConfig.TRANSACTION_EXCHANGE,
-//                    RabbitMQConfig.TRANSACTION_ROUTING_KEY,
-//                    transactionExchangeIbDto
-//            );
             if (response == null) {
                 log.warn("SalesPoint недоступен, транзакция сохранена локально, но не отправлена.");
                 // Можно вернуть Optional.empty() или сохранить статус отправки в базу
@@ -243,63 +158,6 @@ public class TransactionService implements AbstractService<Long, TransactionDto>
     }
 
 
-//public Optional<TransactionExchangeDto> saveAndSendTransaction(TransactionDto transactionDto) {
-//    Span span = tracer.spanBuilder("saveAndSendTransaction").startSpan();
-//    try(Scope scope = span.makeCurrent()) {
-//        span.setAttribute("processing-center", "создание транзакции");
-//        transactionDto.setId(null); // Сбрасываем ID, чтобы создать новую
-//        // Устанавливаем текущую дату:
-//        transactionDto.setTransactionDate(LocalDate.now());
-//        Transaction savedTransaction = transactionRepository.save(transactionMapper.toEntity(transactionDto));
-//        log.info("Transaction saved locally with id: {}", savedTransaction.getId());
-//
-//        updateAccountBalance(savedTransaction);
-//
-//        TransactionExchangeDto exchangeDto = convertToExchangeDto(transactionDto);
-//        TransactionExchangeIbDto transactionExchangeIbDto = convertToTransactionExchangeIbDto(transactionDto);
-//
-//
-//        SpanContext spanContext = span.getSpanContext();
-//        if (spanContext.isValid()) {
-//            String message = "00-" + spanContext.getTraceId() + "-" + spanContext.getSpanId() + "-01";
-//
-//            log.info("Отправляем message:{}", message);
-//        } else {
-//            log.warn("Не удалось получить message");
-//        }
-//        TransactionExchangeDto response = salesPointClientService.sendTransactionWithRetry(exchangeDto);
-//        transactionExchangeIbDto.setId(savedTransaction.getId()); // ← ЭТО ВАЖНО
-//        issuingBankClientService.sendTransactionWithRabbitMq(transactionExchangeIbDto);
-//
-//
-
-    /// /                        rabbitTemplate.convertAndSend(
-    /// /                    RabbitMQConfig.TRANSACTION_EXCHANGE,
-    /// /                    RabbitMQConfig.TRANSACTION_ROUTING_KEY,
-    /// /                    transactionExchangeIbDto
-    /// /            );
-//
-//
-//        return Optional.of(response);
-//
-//    } catch (FeignException fe) {
-//        span.recordException(fe);
-//        log.error("Failed to send transaction to sales-point (Feign): {}", fe.getMessage(), fe);
-//        throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Failed to forward transaction to sales-point", fe);
-//    } catch (DataIntegrityViolationException dive) {
-//        span.recordException(dive);
-//        log.error("Transaction already exists or violates DB constraints: {}", dive.getMessage(), dive);
-//        throw new ResponseStatusException(HttpStatus.CONFLICT, "Transaction violates constraints", dive);
-//    } catch (Exception e) {
-//        span.setStatus(StatusCode.ERROR);
-//        span.recordException(e);
-//        log.error("Unexpected error during transaction processing: {}", e.getMessage(), e);
-//        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error", e);
-//    }
-//    finally {
-//        span.end();
-//    }
-//}
     private void updateAccountBalance(Transaction transaction) {
         if (transaction.getTransactionType() == null || transaction.getTransactionType().getId() == null) {
             log.error("TransactionType or its ID is null for transaction id: {}", transaction.getId());

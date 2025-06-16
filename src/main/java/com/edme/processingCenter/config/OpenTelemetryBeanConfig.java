@@ -9,17 +9,9 @@ import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
-import io.opentelemetry.sdk.resources.Resource;
-import io.opentelemetry.sdk.trace.SdkTracerProvider;
-import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import java.time.Duration;
-
 import static io.opentelemetry.semconv.ResourceAttributes.SERVICE_NAME;
-//import static io.opentelemetry.semconv.resource.attributes.ResourceAttributes.SERVICE_NAME;
-//import static org.apache.kafka.shaded.io.opentelemetry.proto.collector.metrics.v1.MetricsServiceGrpc.SERVICE_NAME;
+
 
 
 import java.time.Duration;
