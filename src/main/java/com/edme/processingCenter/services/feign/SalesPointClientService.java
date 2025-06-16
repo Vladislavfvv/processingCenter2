@@ -60,6 +60,47 @@ public class SalesPointClientService {
 //        });
 //    }
 
+//    public TransactionExchangeDto sendTransactionWithRetry(TransactionExchangeDto dto) {
+//        log.info("Attempting to send transaction to SalesPoint: {}", dto);
+//        //RetryTemplate, который автоматизирует повторные попытки, вызывает основной блок
+//        Span span = Span.current();
+//        return retryTemplate.execute(
+//                context -> {
+//                    //подсчет попыток отправки
+//                    int attempt = context.getRetryCount() + 1;
+//                    log.info("Retry attempt #{} to send transaction to SalesPoint", attempt);
+//
+//                    try {
+//                        //точка вызова Feign клиента, отправка запроса в sales-point посредством интерфейса подключения feign
+//                        TransactionExchangeDto response = salesPointClient.sendTransaction(dto);
+//                        if (response == null) { //если sales-point вернул null, считаем это ошибкой → выбрасываем исключение
+//                            log.warn("Received null response on attempt #{}", attempt);
+//                            throw new EmptyResponseException("Empty response from SalesPoint");
+//                        }
+//                        log.info("Transaction successfully sent to SalesPoint on attempt #{}", attempt);
+//                        log.info("Transaction saved in SalesPoint with ID = {}, full object: {}", response.getId(), response);
+//                        return response;//транзакция успешно отправлена, возвращается результат от sales-point.
+//
+//                    } catch (Exception e) {
+//                        log.error("Error during attempt #{} to send transaction: {}", attempt, e.getMessage());
+//                        throw e; // обязательно пробрасываем дальше, чтобы RetryTemplate сработал
+//                    }
+//                },
+//                //при полном исчерпании попыток — вызывает fallback блок
+//                context -> {
+//                    Throwable lastThrowable = context.getLastThrowable();
+//                    log.error("Retries exhausted when calling SalesPoint. Last exception: {}",
+//                            lastThrowable != null ? lastThrowable.getMessage() : "unknown");
+//
+//                    throw new ServerErrorException("Retries exhausted when calling SalesPoint", lastThrowable);
+//                }
+//        );
+//    }
+
+
+
+
+
     public TransactionExchangeDto sendTransactionWithRetry(TransactionExchangeDto dto) {
         log.info("Attempting to send transaction to SalesPoint: {}", dto);
         //RetryTemplate, который автоматизирует повторные попытки, вызывает основной блок
@@ -92,10 +133,31 @@ public class SalesPointClientService {
                     log.error("Retries exhausted when calling SalesPoint. Last exception: {}",
                             lastThrowable != null ? lastThrowable.getMessage() : "unknown");
 
-                    throw new ServerErrorException("Retries exhausted when calling SalesPoint", lastThrowable);
+                    //throw new ServerErrorException("Retries exhausted when calling SalesPoint", lastThrowable);
+                    // Вместо выбрасывания исключения, вернём null
+                    return null;
                 }
         );
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //    //вариант без вылета исключения ServerErrorException

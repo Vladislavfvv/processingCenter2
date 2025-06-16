@@ -32,8 +32,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(Customizer.withDefaults()) // Включаем CORS из WebConfig
                 .authorizeHttpRequests(
-                        auth -> auth.requestMatchers("/auth").permitAll()
+                        auth -> auth
+                                .requestMatchers("/auth").permitAll()
+                                .requestMatchers(
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html",
+                                        "/webjars/**",
+                                        "/swagger-resources/**"
+                                ).permitAll()
                                 // Только GET для роли "user"
                                 .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("user", "admin")
                                 // Все методы для роли "admin"

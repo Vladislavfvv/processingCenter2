@@ -1,21 +1,19 @@
 package com.edme.processingCenter.controllers;
 
 import com.edme.commondto.dto.TransactionExchangeDto;
-import com.edme.processingCenter.dto.MessageResponse;
 import com.edme.processingCenter.dto.TransactionDto;
-//import com.edme.processingCenter.dto.feignDto.TransactionExchangeDto;
 import com.edme.processingCenter.services.TransactionService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
+@SecurityRequirement(name = "JWT")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +21,7 @@ import java.util.Optional;
 public class TransactionController {
 //    @Autowired
     private final TransactionService transactionService;
+
 
 //    @PostMapping
 //    public TransactionExchangeDto createTransaction(@RequestBody TransactionExchangeDto transaction) {

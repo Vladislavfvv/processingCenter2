@@ -2,6 +2,7 @@ package com.edme.processingCenter.controllers;
 
 import com.edme.processingCenter.dto.AuthDto;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.Setter;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+@SecurityRequirement(name = "JWT")
 @Setter
 @RestController
 public class AuthController {

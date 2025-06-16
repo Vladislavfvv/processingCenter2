@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -59,6 +60,7 @@ public class TransactionService implements AbstractService<Long, TransactionDto>
     private final TransactionTypeService transactionTypeService;
     private final RabbitTemplate rabbitTemplate;
     private final Tracer tracer;
+    private final CacheManager cacheManager;
 
     //Tracer tracer = GlobalOpenTelemetry.getTracer("processing-center");
 
@@ -178,9 +180,10 @@ public class TransactionService implements AbstractService<Long, TransactionDto>
 //        return Optional.empty();
 //    }
 //}
+    @CacheEvict(value = {"allTransactionsCache", "transactionByIdCache"}, allEntries = true)
     public Optional<TransactionExchangeDto> saveAndSendTransaction(TransactionDto transactionDto) {
         Span span = tracer.spanBuilder("saveAndSendTransaction").startSpan();
-        try(Scope scope = span.makeCurrent()) {
+        try (Scope scope = span.makeCurrent()) {
             span.setAttribute("processing-center", "создание транзакции");
             transactionDto.setId(null); // Сбрасываем ID, чтобы создать новую
             // Устанавливаем текущую дату:
@@ -192,7 +195,7 @@ public class TransactionService implements AbstractService<Long, TransactionDto>
 
             TransactionExchangeDto exchangeDto = convertToExchangeDto(transactionDto);
             TransactionExchangeIbDto transactionExchangeIbDto = convertToTransactionExchangeIbDto(transactionDto);
-
+            cacheManager.getCache("transactionByIdCache").put(savedTransaction.getId(), savedTransaction);
 
             SpanContext spanContext = span.getSpanContext();
             if (spanContext.isValid()) {
@@ -212,6 +215,11 @@ public class TransactionService implements AbstractService<Long, TransactionDto>
 //                    RabbitMQConfig.TRANSACTION_ROUTING_KEY,
 //                    transactionExchangeIbDto
 //            );
+            if (response == null) {
+                log.warn("SalesPoint недоступен, транзакция сохранена локально, но не отправлена.");
+                // Можно вернуть Optional.empty() или сохранить статус отправки в базу
+                return Optional.empty();
+            }
 
 
             return Optional.of(response);
@@ -228,9 +236,8 @@ public class TransactionService implements AbstractService<Long, TransactionDto>
             span.setStatus(StatusCode.ERROR);
             span.recordException(e);
             log.error("Unexpected error during transaction processing: {}", e.getMessage(), e);
-             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error", e);
-        }
-        finally {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error", e);
+        } finally {
             span.end();
         }
     }
@@ -265,11 +272,12 @@ public class TransactionService implements AbstractService<Long, TransactionDto>
 //        issuingBankClientService.sendTransactionWithRabbitMq(transactionExchangeIbDto);
 //
 //
-////                        rabbitTemplate.convertAndSend(
-////                    RabbitMQConfig.TRANSACTION_EXCHANGE,
-////                    RabbitMQConfig.TRANSACTION_ROUTING_KEY,
-////                    transactionExchangeIbDto
-////            );
+
+    /// /                        rabbitTemplate.convertAndSend(
+    /// /                    RabbitMQConfig.TRANSACTION_EXCHANGE,
+    /// /                    RabbitMQConfig.TRANSACTION_ROUTING_KEY,
+    /// /                    transactionExchangeIbDto
+    /// /            );
 //
 //
 //        return Optional.of(response);
@@ -292,10 +300,6 @@ public class TransactionService implements AbstractService<Long, TransactionDto>
 //        span.end();
 //    }
 //}
-
-
-
-
     private void updateAccountBalance(Transaction transaction) {
         if (transaction.getTransactionType() == null || transaction.getTransactionType().getId() == null) {
             log.error("TransactionType or its ID is null for transaction id: {}", transaction.getId());

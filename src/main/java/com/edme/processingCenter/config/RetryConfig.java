@@ -3,6 +3,7 @@ package com.edme.processingCenter.config;
 import com.edme.common.exceptions.ClientErrorException;
 import com.edme.common.exceptions.EmptyResponseException;
 import com.edme.common.exceptions.ServerErrorException;
+import feign.FeignException;
 import feign.RetryableException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,7 @@ public class RetryConfig {
         return RetryTemplate.builder()
                 .maxAttempts(3) // количество повторов
                 .fixedBackoff(100) // задержка между повторами (мс)
+                .retryOn(FeignException.class)
                 .retryOn(ServerErrorException.class)
                 .retryOn(EmptyResponseException.class)
                 .build();
